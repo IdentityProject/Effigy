@@ -7,7 +7,7 @@ uint attackVictoryProbability = 70;
     randNonce++;
     return uint(keccak256(now, msg.sender, randNonce)) % _modulus;
   }
-   function attack(uint _effigyId, uint _targetId) external ownerOf(_effigyId) {
+   function attack(uint _effigyId, uint _targetId) external onlyownerOf(_effigyId) {
     Effigy storage myEffigy = effigies[_effigyId];
     Effigy storage enemyEffigy = effigies[_targetId];
     uint rand = randMod(100);
