@@ -1,5 +1,6 @@
 pragma solidity ^0.4.19;
-
+// @author Zander Kiel Identity Network 2018
+// @title Effigy 2018 
 import "./effigyiron.sol";
 import "./erc721.sol";
 
