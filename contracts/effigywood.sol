@@ -1,7 +1,10 @@
 pragma solidity ^0.4.19;
 
 import "./ownable.sol";
+import "./safemath.sol";
 contract EffigyWood is Ownable {
+
+using SafeMath for uint256;
 
     event NewEffigy(uint effigyId, string name, uint dna);
 
