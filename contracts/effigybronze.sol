@@ -4,9 +4,24 @@ import "./effigystone.sol";
 
 contract EffigyBronze is EffigyStone {
 
+uint levelUpFee = 0.001 ether;
+
   modifier aboveLevel(uint _level, uint _effigyId) {
     require(effigies[_effigyId].level >= _level);
     _;
+  }
+  
+   function withdraw() external onlyOwner {
+    owner.transfer(this.balance);
+  }
+
+  function setLevelUpFee(uint _fee) external onlyOwner {
+    levelUpFee = _fee;
+  }
+  
+  function levelUp(uint _effigyId) external payable {
+    require(msg.value == levelUpFee);
+    effigies[_effigyId].level++;
   }
   
   function changeName(uint _effigyId, string _newName) external aboveLevel(2, _effigyId) {
