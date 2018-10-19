@@ -1,6 +1,7 @@
 pragma solidity ^0.4.19;
 
-contract EffigyWood {
+import "./ownable.sol";
+contract EffigyWood is Ownable {
 
     event NewEffigy(uint effigyId, string name, uint dna);
 
