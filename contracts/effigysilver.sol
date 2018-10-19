@@ -15,8 +15,8 @@ mapping (uint => address) effigyApprovals;
   
   
   function _transfer(address _from, address _to, uint256 _tokenId) private {
-    ownerEffigyCount[_to]++;
-    ownerEffigyCount[_from]--;
+     ownerEffigyCount[_to] = ownerEffigyCount[_to].add(1);
+    ownerEffigyCount[_from] = ownerEffigyCount[_from].sub(1);
     effigyToOwner[_tokenId] = _to;
     Transfer(_from, _to, _tokenId);
   }
