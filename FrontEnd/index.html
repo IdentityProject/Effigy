@@ -2,10 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Effigy front-end</title>
+    <title>Effigy</title>
     <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script language="javascript" type="text/javascript" src="web3.min.js"></script>
-    <script language="javascript" type="text/javascript" src="cryptozombies_abi.js"></script>
+    <script language="javascript" type="text/javascript" src="effigy_abi.js"></script>
   </head>
   <body>
     <div id="txStatus"></div>
@@ -16,7 +16,7 @@
       var userAccount;
 
       function startApp() {
-        var EffigyAddress = "YOUR_CONTRACT_ADDRESS";
+        var EffigyAddress = "0xb3543a331f7c0D6906091153546aecc15b1c06d9";
         Effigy = new web3js.eth.Contract(EffigyABI, EffigyAddress);
 
         var accountInterval = setInterval(function() {
