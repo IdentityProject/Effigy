@@ -11,5 +11,15 @@ uint attackVictoryProbability = 70;
     Effigy storage myEffigy = effigies[_effigyId];
     Effigy storage enemyEffigy = effigies[_targetId];
     uint rand = randMod(100);
+    if (rand <= attackVictoryProbability) {
+      myEffigy.winCount++;
+      myEffigy.level++;
+      enemyEffigy.lossCount++;
+      feedAndMultiply(_effigyId, enemyEffigy.dna, "effigy");
+    } else {
+      myEffigy.lossCount++;
+      enemyEffigy.winCount++;
+      _triggerCooldown(myEffigy);
+    }
   }
 }
