@@ -17,7 +17,7 @@ contract EffigyWood {
     mapping (uint => address) public effigyToOwner;
     mapping (address => uint) ownerEffigyCount;
 
-    function _createEffigy(string _name, uint _dna) private {
+    function _createEffigy(string _name, uint _dna) internal {
         
         uint id = effigies.push(Effigy(_name, _dna)) - 1;
         effigyToOwner[id] = msg.sender;
