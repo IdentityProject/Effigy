@@ -33,15 +33,17 @@ KittyInterface kittyContract;
       return (_effigy.readyTime <= now);
   }
 
- function feedAndMultiply(uint _effigyId, uint _targetDna, string _species) public {
+function feedAndMultiply(uint _effigyId, uint _targetDna, string _species) internal {
     require(msg.sender == effigyToOwner[_effigyId]);
     Effigy storage myEffigy = effigies[_effigyId];
+    require(_isReady(myEffigy));
     _targetDna = _targetDna % dnaModulus;
     uint newDna = (myEffigy.dna + _targetDna) / 2;
     if (keccak256(_species) == keccak256("kitty")) {
       newDna = newDna - newDna % 100 + 99;
     }
     _createEffigy("NoName", newDna);
+     _triggerCooldown(myEffigy);
     }
 
 function feedOnKitty(uint _effigyId, uint _kittyId) public {
