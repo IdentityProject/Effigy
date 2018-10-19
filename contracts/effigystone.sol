@@ -24,6 +24,14 @@ KittyInterface kittyContract;
   function setKittyContractAddress(address _address) external onlyOwner {
     kittyContract = KittyInterface(_address);
   }
+  
+  function _triggerCooldown(Effigy storage _effigy) internal {
+    _effigy.readyTime = uint32(now + cooldownTime);
+  }
+
+  function _isReady(Effigy storage _effigy) internal view returns (bool) {
+      return (_effigy.readyTime <= now);
+  }
 
  function feedAndMultiply(uint _effigyId, uint _targetDna, string _species) public {
     require(msg.sender == effigyToOwner[_effigyId]);
