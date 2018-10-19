@@ -4,7 +4,7 @@ pragma solidity ^0.4.19;
 import "./effigyiron.sol";
 import "./erc721.sol";
 
-contract EffigySilver is EffigyIron, ERC721 {
+contract Effigy is EffigyIron, ERC721 {
 mapping (uint => address) effigyApprovals;
  function balanceOf(address _owner) public view returns (uint256 _balance) {
     return ownerEffigyCount[_owner];
@@ -22,12 +22,12 @@ mapping (uint => address) effigyApprovals;
     Transfer(_from, _to, _tokenId);
   }
 
-  function transfer(address _to, uint256 _tokenId) public onlyOwnerOf(_tokenId) {
+  function transfer(address _to, uint256 _tokenId) public onlyownerOf(_tokenId) {
     _transfer(msg.sender, _to, _tokenId);
 
   }
 
-   function approve(address _to, uint256 _tokenId) public onlyOwnerOf(_tokenId) {
+   function approve(address _to, uint256 _tokenId) public onlyownerOf(_tokenId) {
     effigyApprovals[_tokenId] = _to;
     Approval(msg.sender, _to, _tokenId);
 
