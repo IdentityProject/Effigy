@@ -24,13 +24,11 @@ uint levelUpFee = 0.001 ether;
     effigies[_effigyId].level++;
   }
   
-  function changeName(uint _effigyId, string _newName) external aboveLevel(2, _effigyId) {
-    require(msg.sender == effigyToOwner[_effigyId]);
+  function changeName(uint _effigyId, string _newName) external aboveLevel(2, _effigyId) ownerOf(_effigyId) {
     effigies[_effigyId].name = _newName;
   }
 
-  function changeDna(uint _effigyId, uint _newDna) external aboveLevel(20, _effigyId) {
-    require(msg.sender == effigyToOwner[_effigyId]);
+  function changeDna(uint _effigyId, uint _newDna) external aboveLevel(20, _effigyId) ownerOf(_effigyId) {
     effigies[_effigyId].dna = _newDna;
   }
   
