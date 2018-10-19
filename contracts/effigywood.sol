@@ -7,10 +7,13 @@ contract EffigyWood is Ownable {
 
     uint dnaDigits = 16;
     uint dnaModulus = 10 ** dnaDigits;
+    uint cooldownTime = 1 days;
 
     struct Effigy {
         string name;
         uint dna;
+        uint32 level;
+        uint32 readyTime;
     }
 
     Effigy[] public effigies;
@@ -20,7 +23,7 @@ contract EffigyWood is Ownable {
 
     function _createEffigy(string _name, uint _dna) internal {
         
-        uint id = effigies.push(Effigy(_name, _dna)) - 1;
+        uint id = effigies.push(Effigy(_name, _dna, 1, uint32(now + cooldownTime))) - 1;
         effigyToOwner[id] = msg.sender;
         ownerEffigyCount[msg.sender]++;
         NewEffigy(id, _name, _dna);
