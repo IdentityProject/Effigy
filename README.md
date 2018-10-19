@@ -1,0 +1,2 @@
+# Effigy
+Decentralized Social Profile
