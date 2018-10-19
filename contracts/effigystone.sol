@@ -20,7 +20,10 @@ contract KittyInterface {
 contract EffigyStone is EffigyWood {
 
 KittyInterface kittyContract;
-  
+  modifier ownerOf(uint _effigyId) {
+    require(msg.sender == effigyToOwner[_effigyId]);
+    _;
+  }
   function setKittyContractAddress(address _address) external onlyOwner {
     kittyContract = KittyInterface(_address);
   }
@@ -33,8 +36,7 @@ KittyInterface kittyContract;
       return (_effigy.readyTime <= now);
   }
 
-function feedAndMultiply(uint _effigyId, uint _targetDna, string _species) internal {
-    require(msg.sender == effigyToOwner[_effigyId]);
+ function feedAndMultiply(uint _effigyId, uint _targetDna, string _species) internal ownerOf(_effigyId) {
     Effigy storage myEffigy = effigies[_effigyId];
     require(_isReady(myEffigy));
     _targetDna = _targetDna % dnaModulus;
