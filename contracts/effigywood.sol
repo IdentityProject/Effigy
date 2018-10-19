@@ -5,6 +5,8 @@ import "./safemath.sol";
 contract EffigyWood is Ownable {
 
 using SafeMath for uint256;
+using SafeMath32 for uint32;
+  using SafeMath16 for uint16;
 
     event NewEffigy(uint effigyId, string name, uint dna);
 
@@ -30,7 +32,7 @@ using SafeMath for uint256;
         
        uint id = effigies.push(Effigy(_name, _dna, 1, uint32(now + cooldownTime), 0, 0)) - 1;
         effigyToOwner[id] = msg.sender;
-        ownerEffigyCount[msg.sender]++;
+        ownerEffigyCount[msg.sender] = ownerEffigyCount[msg.sender].add(1);
         NewEffigy(id, _name, _dna);
     } 
 
