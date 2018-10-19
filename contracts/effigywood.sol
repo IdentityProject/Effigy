@@ -1,6 +1,6 @@
 pragma solidity ^0.4.19;
 
-contract EffigyRegistry {
+contract EffigyWood {
 
     event NewEffigy(uint effigyId, string name, uint dna);
 
@@ -13,10 +13,15 @@ contract EffigyRegistry {
     }
 
     Effigy[] public effigies;
+    
+    mapping (uint => address) public effigyToOwner;
+    mapping (address => uint) ownerEffigyCount;
 
     function _createEffigy(string _name, uint _dna) private {
         
         uint id = effigies.push(Effigy(_name, _dna)) - 1;
+        effigyToOwner[id] = msg.sender;
+        ownerEffigyCount[msg.sender]++;
         NewEffigy(id, _name, _dna);
     } 
 
@@ -26,8 +31,12 @@ contract EffigyRegistry {
     }
 
     function createRandomEffigy(string _name) public {
+        require(ownerEffigyCount[msg.sender] == 0);
         uint randDna = _generateRandomDna(_name);
         _createEffigy(_name, randDna);
     }
 
+}
+
+contract EffigyStone is EffigyWood {
 }
