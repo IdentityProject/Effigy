@@ -1,44 +1,41 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.19;
+// @author Zander Kiel Identity Network 2018
+// @title Effigy 2018 
+import "./effigyiron.sol";
+import "./erc721.sol";
 
-/**
- * @title SafeMath
- * @dev Math operations with safety checks that throw on error
- */
-library SafeMath {
-
-  /**
-  * @dev Multiplies two numbers, throws on overflow.
-  */
-  function mul(uint256 a, uint256 b) internal pure returns (uint256) {
-    if (a == 0) {
-      return 0;
-    }
-    uint256 c = a * b;
-    assert(c / a == b);
-    return c;
+contract EffigySilver is EffigyIron, ERC721 {
+mapping (uint => address) effigyApprovals;
+ function balanceOf(address _owner) public view returns (uint256 _balance) {
+    return ownerEffigyCount[_owner];
   }
 
-  /**
-  * @dev Integer division of two numbers, truncating the quotient.
-  */
-  function div(uint256 a, uint256 b) internal pure returns (uint256) {
-    // assert(b > 0); // Solidity automatically throws when dividing by 0
-    uint256 c = a / b;
-    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
-    return c;
+  function ownerOf(uint256 _tokenId) public view returns (address _owner) {
+    return effigyToOwner[_tokenId];
+  }
+  
+  
+  function _transfer(address _from, address _to, uint256 _tokenId) private {
+     ownerEffigyCount[_to] = ownerEffigyCount[_to].add(1);
+    ownerEffigyCount[_from] = ownerEffigyCount[_from].sub(1);
+    effigyToOwner[_tokenId] = _to;
+    Transfer(_from, _to, _tokenId);
   }
 
-  /**
-  * @dev Subtracts two numbers, throws on overflow (i.e. if subtrahend is greater than minuend).
-  */
-  function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-    assert(b <= a);
-    return a - b;
+  function transfer(address _to, uint256 _tokenId) public onlyownerOf(_tokenId) {
+    _transfer(msg.sender, _to, _tokenId);
+
   }
 
-  /**
-  * @dev Adds two numbers, throws on overflow.
-  */
-  function add(uint256 a, uint256 b) internal pure returns (uint256) {
-    uint256 c = a + b;
-    assert(c >= a);
+   function approve(address _to, uint256 _tokenId) public onlyownerOf(_tokenId) {
+    effigyApprovals[_tokenId] = _to;
+    Approval(msg.sender, _to, _tokenId);
+
+  }
+
+  function takeOwnership(uint256 _tokenId) public {
+ require(effigyApprovals[_tokenId] == msg.sender);
+    address owner = ownerOf(_tokenId);
+    _transfer(owner, msg.sender, _tokenId);
+  }
+}
