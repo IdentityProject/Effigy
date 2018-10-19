@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Effigy front-end</title>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script language="javascript" type="text/javascript" src="web3.min.js"></script>
+    <script language="javascript" type="text/javascript" src="cryptozombies_abi.js"></script>
+  </head>
+  <body>
+    <div id="txStatus"></div>
+    <div id="effigies"></div>
+
+    <script>
+      var Effigy;
+      var userAccount;
+
+      function startApp() {
+        var EffigyAddress = "YOUR_CONTRACT_ADDRESS";
+        Effigy = new web3js.eth.Contract(EffigyABI, EffigyAddress);
+
+        var accountInterval = setInterval(function() {
+          // Check if account has changed
+          if (web3.eth.accounts[0] !== userAccount) {
+            userAccount = web3.eth.accounts[0];
+            // Call a function to update the UI with the new account
+            getEffigiesByOwner(userAccount)
+            .then(displayEffigies);
+          }
+        }, 100);
+
+        Effigy.events.Transfer({ filter: { _to: userAccount } })
+        .on("data", function(event) {
+          let data = event.returnValues;
+          getEffigiesByOwner(userAccount).then(displayEffigies);
+        }).on("error", console.error);
+      }
+
+      function displayEffigies(ids) {
+        $("#effigies").empty();
+        for (id of ids) {
+          // Look up effigy details from our contract. Returns a `effigy` object
+          getEffigyDetails(id)
+          .then(function(effigy) {
+            // Using ES6's "template literals" to inject variables into the HTML.
+            // Append each one to our #effigies div
+            $("#effigies").append(`<div class="effigy">
+              <ul>
+                <li>Name: ${effigy.name}</li>
+                <li>DNA: ${effigy.dna}</li>
+                <li>Level: ${effigy.level}</li>
+                <li>Wins: ${effigy.winCount}</li>
+                <li>Losses: ${effigy.lossCount}</li>
+                <li>Ready Time: ${effigy.readyTime}</li>
+              </ul>
+            </div>`);
+          });
+        }
+      }
+
+      function createRandomEffigy(name) {
+        // This is going to take a while, so update the UI to let the user know
+        // the transaction has been sent
+        $("#txStatus").text("Creating new effigy on the blockchain. This may take a while...");
+        // Send the tx to our contract:
+        return Effigy.methods.createRandomEffigy(name)
+        .send({ from: userAccount })
+        .on("receipt", function(receipt) {
+          $("#txStatus").text("Successfully created " + name + "!");
+          // Transaction was accepted into the blockchain, let's redraw the UI
+          getEffigiesByOwner(userAccount).then(displayEffigies);
+        })
+        .on("error", function(error) {
+          // Do something to alert the user their transaction has failed
+          $("#txStatus").text(error);
+        });
+      }
+
+      function feedOnKitty(effigyId, kittyId) {
+        $("#txStatus").text("Eating a kitty. This may take a while...");
+        return Effigy.methods.feedOnKitty(effigyId, kittyId)
+        .send({ from: userAccount })
+        .on("receipt", function(receipt) {
+          $("#txStatus").text("Ate a kitty and spawned a new Effigy!");
+          getEffigiesByOwner(userAccount).then(displayEffigies);
+        })
+        .on("error", function(error) {
+          $("#txStatus").text(error);
+        });
+      }
+
+      function levelUp(effigyId) {
+        $("#txStatus").text("Leveling up your zombie...");
+        return Effigy.methods.levelUp(effigyId)
+        .send({ from: userAccount, value: web3.utils.toWei("0.001", "ether") })
+        .on("receipt", function(receipt) {
+          $("#txStatus").text("Power overwhelming! Effigy successfully leveled up");
+        })
+        .on("error", function(error) {
+          $("#txStatus").text(error);
+        });
+      }
+
+      function getEffigyDetails(id) {
+        return Effigy.methods.effigies(id).call()
+      }
+
+      function effigyToOwner(id) {
+        return Effigy.methods.effigyToOwner(id).call()
+      }
+
+      function getEffigiesByOwner(owner) {
+        return Effigy.methods.getEffigiesByOwner(owner).call()
+      }
+
+      window.addEventListener('load', function() {
+
+        // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+        if (typeof web3 !== 'undefined') {
+          // Use Mist/MetaMask's provider
+          web3js = new Web3(web3.currentProvider);
+        } else {
+          // Handle the case where the user doesn't have Metamask installed
+          // Probably show them a message prompting them to install Metamask
+        }
+
+        // Now you can start your app & access web3 freely:
+        startApp()
+
+      })
