@@ -19,8 +19,11 @@ contract KittyInterface {
 
 contract EffigyStone is EffigyWood {
 
-address ckAddress = 0x06012c8cf97BEaD5deAe237070F9587f8E7A266d;
-  KittyInterface kittyContract = KittyInterface(ckAddress);
+KittyInterface kittyContract;
+  
+  function setKittyContractAddress(address _address) external {
+    kittyContract = KittyInterface(_address);
+  }
 
  function feedAndMultiply(uint _effigyId, uint _targetDna, string _species) public {
     require(msg.sender == effigyToOwner[_effigyId]);
